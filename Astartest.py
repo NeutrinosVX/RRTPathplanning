@@ -1,101 +1,16 @@
-import copy
-from cmu_graphics import *
-import math
-maze=[[0,0,0,0,3,3,0,0,0], [0,0,3,0,0,0,0,0,0], [0, 0, 3, 3, 3, 0, 0, 3, 0],
-              [0, 3, 3, 0, 0, 0, 0, 3, 0], [0, 0, 3, 0, 0, 0, 0, 0, 0], [0, 0, 3, 3, 3, 3, 3, 0, 0],
-              [0, 0, 0, 3, 0, 0, 0, 0, 3], [0, 1, 0, 0, 0, 3, 0, 0, 3], [0, 0, 0, 3, 3, 3, 3, 0, 0]];
 class Node:
     def __init__(self, parent=None, position=None):
         self.parent = parent
         self.position = position
+
         self.g = 0  # g值（起点到当前节点的实际代价）
         self.h = 0  # h值（当前节点到目标节点的估计代价）
         self.f = 0  # f值（g值加上h值）
 
     def __eq__(self, other):
         return self.position == other.position
-    def __str__(self):
-        return f'{self.position},{self.parent}';
-
-def onAppStart(app):
-    app.rows = 9
-    app.cols = 9
-    app.boardLeft = 65
-    app.boardTop = 65
-    app.boardWidth = 270
-    app.boardHeight = 270
-    app.cellBorderWidth = 1
-    app.width=700;
-    app.selection = (0, 0)
-    app.hover =(0,0);
 
 
-def redrawAll(app):
-    drawBoard(app)
-    drawBoardBorder(app)
-def onMouseMove(app, mouseX, mouseY):
-    selectedCell = getCell(app, mouseX, mouseY)
-    if selectedCell != None:
-        app.hover = selectedCell
-def onMousePress(app,mouseX,mouseY):
-    r,c=getCell(app,mouseX,mouseY)
-    if(maze[r][c]!=1):
-        app.selection=r,c;
-def drawBoard(app):
-    for row in range(app.rows):
-        for col in range(app.cols):
-            drawCell(app, row, col)
-            #print(app.numbers[row][col])
-def drawBoardBorder(app):
-    # draw the board outline (with double-thickness):
-    drawRect(app.boardLeft, app.boardTop, app.boardWidth, app.boardHeight,
-             fill=None, border='black',
-             borderWidth=2 * app.cellBorderWidth)
-
-def drawCell(app, row, col):
-    cellLeft, cellTop = getCellLeftTop(app, row, col)
-    cellWidth, cellHeight = getCellSize(app)
-    if (row, col) == app.hover:
-        color = 'cyan'
-    elif (row, col) == app.selection and maze[row][col]!=1 and maze[row][col]!=3:
-        color = 'yellow'
-    elif  maze[row][col]==3:
-        color = 'green'
-    elif maze[row][col]==1:
-        color= 'blue'
-    else:
-        color = 'white'
-    drawRect(cellLeft, cellTop, cellWidth, cellHeight,
-             fill=color, border='black',
-             borderWidth=app.cellBorderWidth)
-
-
-def getCell(app, x, y):
-    dx = x - app.boardLeft
-    dy = y - app.boardTop
-    cellWidth, cellHeight = getCellSize(app)
-    row = math.floor(dy / cellHeight)
-    col = math.floor(dx / cellWidth)
-    if (0 <= row < app.rows) and (0 <= col < app.cols):
-        return (row, col)
-
-    else:
-        return None
-
-def getCellLeftTop(app, row, col):
-    cellWidth, cellHeight = getCellSize(app)
-    cellLeft = app.boardLeft + col * cellWidth
-    cellTop = app.boardTop + row * cellHeight
-    return (cellLeft, cellTop)
-def drawnumberatcell(app,number,r,c):
-    n=str(number);
-    x,y=getCellSize(app);
-    if(number!=0):
-        drawLabel(n,r*x+app.boardLeft+0.5*x,c*y+app.boardTop+0.5*y);
-def getCellSize(app):
-    cellWidth = app.boardWidth / app.cols
-    cellHeight = app.boardHeight / app.rows
-    return (cellWidth, cellHeight)
 def astar(maze, start, end):
     # 创建起点和目标节点
     start_node = Node(None, start)
@@ -175,8 +90,13 @@ def astar(maze, start, end):
     return None
 
 
-def main():
-    runApp()
+# 测试示例
+maze = [[0,0,0,0,3,3,0,0,0], [0,0,3,0,0,0,0,0,0], [0, 0, 3, 3, 3, 0, 0, 3, 0],
+              [0, 3, 3, 0, 0, 0, 0, 3, 0], [0, 0, 3, 0, 0, 0, 0, 0, 0], [0, 0, 3, 3, 3, 3, 3, 0, 0],
+              [0, 0, 0, 3, 0, 0, 0, 0, 3], [0, 1, 0, 0, 0, 3, 0, 0, 3], [0, 0, 0, 3, 3, 3, 3, 0, 0]];
 
-# inspired by USC professor Quan Nyugen and CMU Professor David Cosbie
-main()
+start = (7, 1)
+end = (4, 4)
+
+path = astar(maze, start, end)
+print(path)
